@@ -1,66 +1,76 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
+(function webpackUniversalModuleDefinition(root, factory) {
+  if(typeof exports === 'object' && typeof module === 'object')
+    module.exports = factory();
+  else if(typeof define === 'function' && define.amd)
+    define([], factory);
+  else if(typeof exports === 'object')
+    exports["ShaderBox"] = factory();
+  else
+    root["ShaderBox"] = factory();
+})(typeof self !== 'undefined' ? self : this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/  // The module cache
+/******/  var installedModules = {};
 /******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
+/******/  // The require function
+/******/  function __webpack_require__(moduleId) {
 /******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
+/******/    // Check if module is in cache
+/******/    if(installedModules[moduleId]) {
+/******/      return installedModules[moduleId].exports;
+/******/    }
+/******/    // Create a new module (and put it into the cache)
+/******/    var module = installedModules[moduleId] = {
+/******/      i: moduleId,
+/******/      l: false,
+/******/      exports: {}
+/******/    };
 /******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/    // Execute the module function
+/******/    modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
+/******/    // Flag the module as loaded
+/******/    module.l = true;
 /******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
+/******/    // Return the exports of the module
+/******/    return module.exports;
+/******/  }
 /******/
 /******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
+/******/  // expose the modules object (__webpack_modules__)
+/******/  __webpack_require__.m = modules;
 /******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
+/******/  // expose the module cache
+/******/  __webpack_require__.c = installedModules;
 /******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
+/******/  // define getter function for harmony exports
+/******/  __webpack_require__.d = function(exports, name, getter) {
+/******/    if(!__webpack_require__.o(exports, name)) {
+/******/      Object.defineProperty(exports, name, {
+/******/        configurable: false,
+/******/        enumerable: true,
+/******/        get: getter
+/******/      });
+/******/    }
+/******/  };
 /******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
+/******/  // getDefaultExport function for compatibility with non-harmony modules
+/******/  __webpack_require__.n = function(module) {
+/******/    var getter = module && module.__esModule ?
+/******/      function getDefault() { return module['default']; } :
+/******/      function getModuleExports() { return module; };
+/******/    __webpack_require__.d(getter, 'a', getter);
+/******/    return getter;
+/******/  };
 /******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/  // Object.prototype.hasOwnProperty.call
+/******/  __webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/";
+/******/  // __webpack_public_path__
+/******/  __webpack_require__.p = "/";
 /******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/  // Load entry module and return exports
+/******/  return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -292,101 +302,6 @@ var Shader = class Shader {
 
 module.exports=opts=>"attribute vec2 a_position;\nattribute vec2 a_texture;\nuniform vec2 u_move;\nuniform vec2 u_scale;\nvarying vec2 v_texture;\nvoid main() {\n\tgl_Position = vec4((a_position + u_move) * u_scale, 0.0, 1.0);\n\tv_texture = a_texture;\n}\n";
 
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Box, Shader, box, draw, frag_shader, frag_shader2, mouse, shaderA, shaderB;
-
-({Box, Shader} = __webpack_require__(0));
-
-frag_shader = __webpack_require__(3)();
-
-frag_shader2 = __webpack_require__(4)();
-
-box = new Box({
-  canvas: window.canvas, //canvas element to get context from
-  resize: true, //auto resize on window.resize
-  clearColor: [0.0, 0.0, 0.0, 1.0],
-  grid: [
-    2,
-    1 //x and y size of a grid, if you want to display more than one shader like in this example. default is 1 x 1
-  ],
-  context: {
-    antialias: true,
-    depth: false
-  }
-});
-
-shaderA = new Shader({
-  code: frag_shader, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
-  uniforms: {
-    iTime: {
-      type: '1f',
-      val: 0.4
-    }
-  }
-});
-
-shaderB = new Shader({
-  code: frag_shader2, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
-  textureUrl: './star.jpeg',
-  uniforms: {
-    pos: {
-      type: '2fv', // setter = @gl["uniform"+type]
-      val: [0.4, 0.4]
-    },
-    iTime: {
-      type: '1f',
-      val: 0.4
-    }
-  }
-});
-
-box.add(shaderA).add(shaderB);
-
-mouse = {
-  x: 0,
-  y: 0
-};
-
-window.addEventListener('mousemove', (e) => {
-  mouse.x = e.clientX;
-  return mouse.y = e.clientY;
-});
-
-// set box.focus to index of the grid, eg if grid is [3,1] focus can be -1 (display all shaders), 0 ,1, or 2
-window.addEventListener('click', (e) => {
-  box.focus += 1;
-  if (box.focus === 2) {
-    return box.focus = -1;
-  }
-});
-
-draw = function(t) {
-  requestAnimationFrame(draw);
-  shaderA.uniforms.iTime.val = t;
-  shaderB.uniforms.iTime.val = t + 4242;
-  shaderB.uniforms.pos.val[0] = mouse.x / window.innerWidth;
-  shaderB.uniforms.pos.val[1] = mouse.y / window.innerHeight;
-  return box.clear().draw(shaderA, 0).draw(shaderB, 1);
-};
-
-draw(0);
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports=opts=>"precision mediump float;\nuniform float iTime;\nuniform vec2 pos;\nvoid main() {\n\tgl_FragColor = vec4(abs(cos(iTime / 2e3) + pos.x), abs(sin(iTime / 3e3) + pos.x), abs(sin(iTime / 2e3)), 1.0);\n}\n";
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports=opts=>"precision mediump float;\nuniform float iTime;\nuniform vec2 pos;\nvarying vec2 v_texture;\nuniform sampler2D u_texture;\nvoid main() {\n\tvec4 sum = vec4(0.0);\n\tvec2 uv = v_texture;\n\tfloat h = ((0.004 * length(uv - pos)) * 5.0) + (sin(iTime / 2e2) / 5e2);\n\tsum += (texture2D(u_texture, vec2(uv.x - (4.0 * h), uv.y)) * 0.051);\n\tsum += (texture2D(u_texture, vec2(uv.x - (3.0 * h), uv.y)) * 0.0918);\n\tsum += (texture2D(u_texture, vec2(uv.x - (2.0 * h), uv.y)) * 0.12245);\n\tsum += (texture2D(u_texture, vec2(uv.x - (1.0 * h), uv.y)) * 0.1531);\n\tsum += (texture2D(u_texture, vec2(uv.x, uv.y)) * 0.1633);\n\tsum += (texture2D(u_texture, vec2(uv.x + (1.0 * h), uv.y)) * 0.1531);\n\tsum += (texture2D(u_texture, vec2(uv.x + (2.0 * h), uv.y)) * 0.12245);\n\tsum += (texture2D(u_texture, vec2(uv.x + (3.0 * h), uv.y)) * 0.0918);\n\tsum += (texture2D(u_texture, vec2(uv.x + (4.0 * h), uv.y)) * 0.051);\n\tsum += (length(uv - pos) * 0.5);\n\tgl_FragColor = sum;\n}\n";
-
 /***/ })
 /******/ ]);
-//# sourceMappingURL=example.bundle.js.map
+});

@@ -2,8 +2,9 @@
   "name": "shader-box",
   "version": "1.0.0",
   "description": "the easiest way to render a simple 1x1 frag shader.",
-  "main": "shader-box.js",
+  "module": "shader-box.js",
   "scripts": {
+    "dev": "webpack-dev-server --config wp.dev.js",
     "prepublish": "webpack --config wp.dist.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

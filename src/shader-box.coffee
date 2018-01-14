@@ -192,8 +192,3 @@ export class Shader
 			throw new Error "Could not initialise shaders"
 		
 		return prog
-
-
-
-
-	

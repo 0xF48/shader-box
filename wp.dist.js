@@ -12,7 +12,8 @@ cfg = {
 		path: __dirname+'/',
 		publicPath: '/',
 		filename: "shader-box.js",
-		library: 'ShaderBox'
+		library: 'ShaderBox',
+		libraryTarget: 'umd'
 	}
 }
 module.exports = cfg

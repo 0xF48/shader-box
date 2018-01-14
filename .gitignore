@@ -24,6 +24,9 @@ build/Release
 static/main.js
 static/main.js.map
 
+
+shader-box.js.map
+
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules

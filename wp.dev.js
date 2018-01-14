@@ -7,7 +7,7 @@ cfg = {
 			{ test: /\.glsl$/, use: "glsl-template-loader" }
 		]
 	},
-	entry: { "shader-box": __dirname+"/src/shader-box.coffee","example/example.bundle": __dirname+"/src/example.coffee" },
+	entry: {"example.bundle": __dirname+"/src/example.coffee" },
 	resolve: { "modules": ["node_modules"] },
 	output: {
 		path: __dirname+'/',
@@ -17,7 +17,7 @@ cfg = {
 
 	devServer: {
 		port: 3000,
-		contentBase: __dirname+"/dist",
+		contentBase: __dirname+"/example",
 		compress: true
 
 	}

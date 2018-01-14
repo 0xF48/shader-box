@@ -95,6 +95,14 @@ tick(0);
 this library uses ES6 classes, and is compiled from coffeescript. you can find the source files in the src folder
 
 ---
+
+
+to run webpack-dev-server with example:
+```
+npm install
+npm run-script dev
+```
+
 todo:
 * clean up
 * multiple shader passes per texture
