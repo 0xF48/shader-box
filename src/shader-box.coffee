@@ -70,6 +70,7 @@ export class Box
 	
 
 	draw: (shader,i)->
+		i = i || 0
 		v_buffer = @vert_buffers[i]
 		t_buffer = @text_buffers[i]
 		if !t_buffer
@@ -189,6 +190,6 @@ export class Shader
 		@gl.linkProgram(prog)
 
 		if !@gl.getProgramParameter(prog, @gl.LINK_STATUS)
-			throw new Error "Could not initialise shaders"
+			throw new Error(this.gl.getProgramInfoLog(prog))
 		
 		return prog

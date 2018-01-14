@@ -78,11 +78,13 @@ var tick = function(t){
   //clear and draw
   box
     .clear()
-    .draw(shaderA)
-    .draw(shaderB)
+    .draw(shaderA,0) //draw a shader at buffer index 0, defaults to 0.
+    .draw(shaderB,1) //draw a shader at buffer index 1, defaults to 0.
+    //buffer indices are the cells grid of the grid from top left to right
+
   
-  //make a shader fullscreen if there is more than one drawn on the grid, setting to -1 will display all the shaders in a grid
-  box.focus = 0 
+  //make a shader fullscreen if there is more than one drawn on the grid, setting to -1 will display all the shaders in a grid,
+  box.focus = 0  //make the first shader fullscreen.
 }
 
 tick(0);

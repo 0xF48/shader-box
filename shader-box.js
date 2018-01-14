@@ -164,6 +164,7 @@ var Box = class Box {
 
   draw(shader, i) {
     var _u, j, len, ref, t_buffer, u, v_buffer;
+    i = i || 0;
     v_buffer = this.vert_buffers[i];
     t_buffer = this.text_buffers[i];
     if (!t_buffer) {
@@ -288,7 +289,7 @@ var Shader = class Shader {
     this.gl.attachShader(prog, vs);
     this.gl.linkProgram(prog);
     if (!this.gl.getProgramParameter(prog, this.gl.LINK_STATUS)) {
-      throw new Error("Could not initialise shaders");
+      throw new Error(this.gl.getProgramInfoLog(prog));
     }
     return prog;
   }
