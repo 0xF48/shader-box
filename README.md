@@ -14,15 +14,10 @@ Import it or use the tag `<script src = '/shader-box.js'></script>`, access via 
 
 ```javascript
 import {Shader,Box} from 'shader-box'
-```
 
 
----
 
-Create a "Box" this super stripped verstion of webgl context that will handle the shaders.
-
-```javascript
-box = new Box({
+var box = new Box({
   canvas: window.my_canvas, //canvas element to get context from
   resize: true, //auto resize viewport on window.resize
   clearColor: [0, 0, 0, 1], //clear color
@@ -32,14 +27,12 @@ box = new Box({
     depth: false
   }
 });
-```
 
----
 
-Create a "Shader" with fragment code and some uniforms.
-```javascript
+
+
 //create a shader
-shaderA = new Shader({
+var shaderA = new Shader({
   code: frag_shader, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
   uniforms: {
     iTime: {
@@ -50,8 +43,9 @@ shaderA = new Shader({
 });
 
 
+
 //create another shader
-shaderB = new Shader({
+var shaderB = new Shader({
   code: frag_shader2, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
   textureUrl: './star.jpeg',
   uniforms: {
@@ -67,31 +61,35 @@ shaderB = new Shader({
 });
 
 
+
 //add the shaders.
 box.add(shaderA).add(shaderB);
-```
 
----
 
-draw it!##
-```javascript
 
-tick = function(t){
+//draw it!
+var tick = function(t){
   requestAnimationFrame(tick)
 
-  shaderA.uniforms.iTime.val = t
+  //update the uniforms.
+  shaderA.uniforms.iTime.val = t 
   shaderB.uniforms.pos.val[0] = 0.5
 
+  //clear and draw
   box
     .clear()
     .draw(shaderA)
     .draw(shaderB)
   
-  box.focus = 0 //make a shader fullscreen if there is more than one drawn on the grid, setting to -1 will display all the shaders in a grid
+  //make a shader fullscreen if there is more than one drawn on the grid, setting to -1 will display all the shaders in a grid
+  box.focus = 0 
 }
 
 tick(0);
 ```
+
+
+
 
 ---
 this library uses ES6 classes, and is compiled from coffeescript. you can find the source files in the src folder
