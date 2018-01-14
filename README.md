@@ -1,16 +1,21 @@
+
+#ShaderBox#
+
 the easiest way to render a simple 1x1 frag shader on a 4 vertex triangle strip, no dependencies.
 good for developing many different shaders seperately from main project, or showing off a collection of shaders on one canvas.
+---
 
 
 
-1. Import it or use the tag `<script src = '/shader-box.js'></script>`, access via window.ShaderBox
+
+Import it or use the tag `<script src = '/shader-box.js'></script>`, access via window.ShaderBox
 
 ```javascript
 import {Shader,Box} from 'shader-box'
 ```
 
 
-
+---
 
 Create a "Box" this super stripped verstion of webgl context that will handle the shaders.
 ```javascript
@@ -26,7 +31,7 @@ box = new Box({
 });
 ```
 
-
+---
 
 Create a "Shader" with fragment code and some uniforms.
 ```javascript
@@ -63,7 +68,7 @@ shaderB = new Shader({
 box.add(shaderA).add(shaderB);
 ```
 
-
+---
 
 draw it!##
 ```javascript
@@ -85,10 +90,10 @@ tick = function(t){
 tick(0);
 ```
 
-
+---
 this library uses ES6 classes, and is compiled from coffeescript. you can find the source files in the src folder
 
-
+---
 todo:
 * clean up
 * multiple shader passes per texture
