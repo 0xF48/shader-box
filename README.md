@@ -1,5 +1,5 @@
 
-##ShaderBox
+## ShaderBox
 
 the easiest way to render a simple 1x1 frag shader on a 4 vertex triangle strip, no dependencies.
 good for developing many different shaders seperately from main project, or showing off a collection of shaders on one canvas.
