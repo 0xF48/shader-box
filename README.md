@@ -1,14 +1,16 @@
 
-## ShaderBox
+# ShaderBox
+`npm install shader-box`
 
-the easiest way to render a simple 1x1 frag shader on a 4 vertex triangle strip, no dependencies.
-good for developing many different shaders seperately from main project, or showing off a collection of shaders on one canvas.
+---
+
+A very easy way to render a simple 1x1 frag shader on a 4 vertex triangle strip, no dependencies. `shader-box` is good for developing many different shaders seperately from main project, or showing off a collection of shaders on one canvas.
+
 ---
 
 
 
-
-Import it or use the tag `<script src = '/shader-box.js'></script>`, access via window.ShaderBox
+Import it or use the tag `<script src = '/shader-box.js'></script>`, access via `window.ShaderBox`
 
 ```javascript
 import {Shader,Box} from 'shader-box'
@@ -18,6 +20,7 @@ import {Shader,Box} from 'shader-box'
 ---
 
 Create a "Box" this super stripped verstion of webgl context that will handle the shaders.
+
 ```javascript
 box = new Box({
   canvas: window.my_canvas, //canvas element to get context from
@@ -74,16 +77,16 @@ draw it!##
 ```javascript
 
 tick = function(t){
-	requestAnimationFrame(tick)
+  requestAnimationFrame(tick)
 
-	shaderA.uniforms.iTime.val = t
-	shaderB.uniforms.pos.val[0] = 0.5
+  shaderA.uniforms.iTime.val = t
+  shaderB.uniforms.pos.val[0] = 0.5
 
-	box
-		.clear()
-		.draw(shaderA)
-		.draw(shaderB)
-	
+  box
+    .clear()
+    .draw(shaderA)
+    .draw(shaderB)
+  
   box.focus = 0 //make a shader fullscreen if there is more than one drawn on the grid, setting to -1 will display all the shaders in a grid
 }
 
