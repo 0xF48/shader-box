@@ -11,7 +11,7 @@ Import it as a module or use the script tag with `window.ShaderBox`
 
 ### Uniforms
 ```glsl
-varying vec2 v_uv;
+varying vec2 v_uv; //gl uv position from 0 to 1, starting top left and ending at bottom right.
 uniform sampler2D u_texture;
 ```
 ***
