@@ -1,7 +1,9 @@
 precision mediump float;
 
 uniform float iTime;
-uniform vec2 pos;
+varying vec2 v_uv;
+
 void main(){
-	gl_FragColor = vec4(abs(cos(iTime/2e3)+pos.x),abs(sin(iTime/3e3)+pos.x),abs(sin(iTime/2e3)),1.0);
+	float l = length(v_uv - 0.5);
+	gl_FragColor = vec4(vec3(l),1.0);
 }

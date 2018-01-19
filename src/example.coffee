@@ -53,12 +53,12 @@ draw = (t)->
 	requestAnimationFrame(draw)
 	shaderA.uniforms.iTime.val = t
 	shaderB.uniforms.iTime.val = t+4242
-	shaderB.uniforms.pos.val[0] = mouse.x / window.innerWidth
+	shaderB.uniforms.pos.val[0] = 1 - (mouse.x / window.innerWidth)
 	shaderB.uniforms.pos.val[1] = mouse.y / window.innerHeight
 	box
 		.clear()
-		.draw(shaderA,0)
-		.draw(shaderB,1)
+		.draw(shaderA)
+		.draw(shaderB)
 
 
 

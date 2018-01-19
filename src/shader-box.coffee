@@ -3,6 +3,9 @@ export class Box
 	constructor: (opt)->
 		@canvas = opt.canvas
 		@grid = opt.grid || [1,1]
+		@shaders = []
+		@pos = []
+		@ratio = 1
 		@gl = @canvas.getContext "experimental-webgl",(opt.context or {antialias:true,depth:false})
 		if !@gl
 			alert 'failed to start webgl :('
@@ -14,17 +17,13 @@ export class Box
 			@gl.clearColor(opt.clearColor[0], opt.clearColor[1], opt.clearColor[2], opt.clearColor[3])
 		else 
 			@gl.clearColor(0,0,0,1)
-		@i = 0
-		@shaders = []
-		@vert_buffers = []
-		@text_buffers = []
+	
+
+		
 		for y in [0...@grid[1]]
 			for x in [0...@grid[0]]
-				@createBuffer()
-				vert_buffer = @createBuffer(x,y,[-1,-1,-1,1,1,-1,1,1])
-				text_buffer = @createBuffer(x,y,[1,1,1,0,0,1,0,0])
-				@vert_buffers.push vert_buffer
-				@text_buffers.push text_buffer
+				@pos.push {x,y}
+			
 
 		@gl.bindFramebuffer(@gl.FRAMEBUFFER,null)
 
@@ -57,10 +56,14 @@ export class Box
 		@canvas.width = @width = @canvas.clientWidth
 		@canvas.height = @height = @canvas.clientHeight
 		@gl.viewport(0, 0, @width, @height)
+		for shader in @shaders
+			shader.setUvBuffer(shader.index)
 
 
 	add: (shader)->
-		shader.init(@)
+
+		shader.init(@,@shaders.length)
+		@shaders.push shader
 		return @
 
 
@@ -69,16 +72,21 @@ export class Box
 		return @
 	
 
-	draw: (shader,i)->
+	draw: (shader)->
+		if !shader.gl
+			throw new Error 'shader has not been added.'
 		i = i || 0
-		v_buffer = @vert_buffers[i]
-		t_buffer = @text_buffers[i]
-		if !t_buffer
-			throw new Error 'bad buffer grid index, your grid too small.'
+		v_buffer = shader.vert_buffer
+		
+		
 		@gl.useProgram shader.program
 		
+
+		shader.updateUvBuffer()
+
+
 		if @focus >= 0
-			if i == @focus
+			if shader.index == @focus
 				v_buffer.u_move.state[0] = v_buffer.u_move.state[1] = 0
 				v_buffer.u_scale.state[0] = v_buffer.u_scale.state[1] = 1
 			else
@@ -109,18 +117,31 @@ export class Box
 					u.set(u.loc,_u.val[0],_u.val[1],_u.val[2],_u.val[3])
 				else
 					u.set(u.loc,_u.val)
-				
+
+	
 		@gl.bindBuffer(@gl.ARRAY_BUFFER, v_buffer)
 		@gl.vertexAttribPointer(shader.a_position, 2, @gl.FLOAT, false, 0, 0)
 		@gl.enableVertexAttribArray(shader.a_position)
+		
+
+
+
+
+		@gl.bindBuffer(@gl.ARRAY_BUFFER, shader.uv_buffer)
+		@gl.vertexAttribPointer(shader.a_texture, 2, @gl.FLOAT, false, 0, 0)
+		@gl.enableVertexAttribArray(shader.a_texture)
+		
+		if shader.texture
+			@gl.bindTexture(@gl.TEXTURE_2D, shader.texture);
+			@gl.uniform1i(shader.u_texture, 0);
+		
+		
 		@gl.drawArrays(@gl.TRIANGLE_STRIP, 0,4)
 
-		if shader.texture
-			@gl.bindBuffer(@gl.ARRAY_BUFFER, t_buffer)
-			@gl.vertexAttribPointer(shader.a_texture, 2, @gl.FLOAT, false, 0, 0)
-			@gl.enableVertexAttribArray(shader.a_texture)
-			@gl.bindTexture(@gl.TEXTURE_2D, shader.texture);
-			@gl.uniform1i(shader.u_texture, 0)
+
+
+		
+		
 
 		return @
 
@@ -131,31 +152,75 @@ export class Shader
 		@textureUrl = opt.textureUrl
 		@uniforms = opt.uniforms
 		@_uniforms = []
+		@focus = false
+		@uv_size = [1.0,1.0]
+	updateUvBuffer: ()->
+		if @box.focus == @index && !@focus
+			@focus = true
+			@setUvBuffer(@index)
+		else if @box.focus != @index && @focus
+			@focus = false
+			@setUvBuffer(@index)
+			
+	
+	setUvBuffer: (i)->
+		# console.log @image_ratio_y,@image_ratio_x
+		if @focus
+			nw = @box.width / @uv_size[0]
+			nh = @box.height / @uv_size[1]
+		else
+			nw = @box.width / @uv_size[0] / @box.grid[0]
+			nh = @box.height / @uv_size[1] / @box.grid[1]
+	
+		r_x = ( (.5) - ((nw / nh) / 2))
+		r_y = ( (.5) - (nh / nw) / 2 )
+
+		if r_x > 0
+			r_y = 0
+			# r_x *= @image_ratio_x
+		else
+			r_x = 0
+			# r_y *= @image_ratio_y
+		@uv_buffer = @box.createBuffer(@box.pos[i].x,@box.pos[i].y,[ r_x,1-r_y,   r_x,r_y, 1-r_x,1-r_y   ,1-r_x,0+r_y,    ])
+
+
+	setVertBuffer: (i)->
+		@vert_buffer = @box.createBuffer(@box.pos[i].x,@box.pos[i].y,[-1,-1,-1,1,1,-1,1,1])
 				
 
-	init: (box)->
-		@gl = box.gl
+	init: (@box,@index)->
+
+
+		@setUvBuffer(@index)
+		@setVertBuffer(@index)
+
+		
+
+		@gl = @box.gl
 		@program = @createProgram(default_vertex_shader,@code)
+
+
 		@a_position = @gl.getAttribLocation(@program, "a_position")
 		@a_texture = @gl.getAttribLocation(@program, "a_texture")
 		@u_move = @gl.getUniformLocation(@program, "u_move")
 		@u_scale = @gl.getUniformLocation(@program, "u_scale")
 		@u_texture = @gl.getUniformLocation(@program, "u_texture")
 
-
+	
 		if @textureUrl
 			@texture = @gl.createTexture()
 			@gl.bindTexture(@gl.TEXTURE_2D, @texture)
 			@gl.texImage2D(@gl.TEXTURE_2D, 0, @gl.RGBA, 1, 1, 0, @gl.RGBA, @gl.UNSIGNED_BYTE,new Uint8Array([0, 0, 255, 255]))
 			image = new Image()
 			image.src = @textureUrl
-			image.addEventListener 'load', ()=>
+			image.addEventListener 'load', (e)=>
 				@gl.bindTexture(@gl.TEXTURE_2D, @texture)
 				@gl.texImage2D(@gl.TEXTURE_2D, 0, @gl.RGBA,@gl.RGBA,@gl.UNSIGNED_BYTE, image)
 				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_WRAP_S, @gl.CLAMP_TO_EDGE)
 				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_WRAP_T, @gl.CLAMP_TO_EDGE)
 				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_MIN_FILTER, @gl.NEAREST)
 				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_MAG_FILTER, @gl.NEAREST)
+				@setUvBuffer(@index)
 
 
 		for key,val of @uniforms

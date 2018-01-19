@@ -87,10 +87,13 @@ default_vertex_shader = __webpack_require__(1)();
 
 var Box = class Box {
   constructor(opt) {
-    var j, k, ref, ref1, text_buffer, vert_buffer, x, y;
+    var j, k, ref, ref1, x, y;
     this.setViewport = this.setViewport.bind(this);
     this.canvas = opt.canvas;
     this.grid = opt.grid || [1, 1];
+    this.shaders = [];
+    this.pos = [];
+    this.ratio = 1;
     this.gl = this.canvas.getContext("experimental-webgl", opt.context || {
       antialias: true,
       depth: false
@@ -108,17 +111,9 @@ var Box = class Box {
     } else {
       this.gl.clearColor(0, 0, 0, 1);
     }
-    this.i = 0;
-    this.shaders = [];
-    this.vert_buffers = [];
-    this.text_buffers = [];
     for (y = j = 0, ref = this.grid[1]; 0 <= ref ? j < ref : j > ref; y = 0 <= ref ? ++j : --j) {
       for (x = k = 0, ref1 = this.grid[0]; 0 <= ref1 ? k < ref1 : k > ref1; x = 0 <= ref1 ? ++k : --k) {
-        this.createBuffer();
-        vert_buffer = this.createBuffer(x, y, [-1, -1, -1, 1, 1, -1, 1, 1]);
-        text_buffer = this.createBuffer(x, y, [1, 1, 1, 0, 0, 1, 0, 0]);
-        this.vert_buffers.push(vert_buffer);
-        this.text_buffers.push(text_buffer);
+        this.pos.push({x, y});
       }
     }
     this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
@@ -147,13 +142,22 @@ var Box = class Box {
   }
 
   setViewport() {
+    var j, len, ref, results, shader;
     this.canvas.width = this.width = this.canvas.clientWidth;
     this.canvas.height = this.height = this.canvas.clientHeight;
-    return this.gl.viewport(0, 0, this.width, this.height);
+    this.gl.viewport(0, 0, this.width, this.height);
+    ref = this.shaders;
+    results = [];
+    for (j = 0, len = ref.length; j < len; j++) {
+      shader = ref[j];
+      results.push(shader.setUvBuffer(shader.index));
+    }
+    return results;
   }
 
   add(shader) {
-    shader.init(this);
+    shader.init(this, this.shaders.length);
+    this.shaders.push(shader);
     return this;
   }
 
@@ -162,17 +166,17 @@ var Box = class Box {
     return this;
   }
 
-  draw(shader, i) {
-    var _u, j, len, ref, t_buffer, u, v_buffer;
-    i = i || 0;
-    v_buffer = this.vert_buffers[i];
-    t_buffer = this.text_buffers[i];
-    if (!t_buffer) {
-      throw new Error('bad buffer grid index, your grid too small.');
+  draw(shader) {
+    var _u, i, j, len, ref, u, v_buffer;
+    if (!shader.gl) {
+      throw new Error('shader has not been added.');
     }
+    i = i || 0;
+    v_buffer = shader.vert_buffer;
     this.gl.useProgram(shader.program);
+    shader.updateUvBuffer();
     if (this.focus >= 0) {
-      if (i === this.focus) {
+      if (shader.index === this.focus) {
         v_buffer.u_move.state[0] = v_buffer.u_move.state[1] = 0;
         v_buffer.u_scale.state[0] = v_buffer.u_scale.state[1] = 1;
       } else {
@@ -207,14 +211,14 @@ var Box = class Box {
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, v_buffer);
     this.gl.vertexAttribPointer(shader.a_position, 2, this.gl.FLOAT, false, 0, 0);
     this.gl.enableVertexAttribArray(shader.a_position);
-    this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, shader.uv_buffer);
+    this.gl.vertexAttribPointer(shader.a_texture, 2, this.gl.FLOAT, false, 0, 0);
+    this.gl.enableVertexAttribArray(shader.a_texture);
     if (shader.texture) {
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, t_buffer);
-      this.gl.vertexAttribPointer(shader.a_texture, 2, this.gl.FLOAT, false, 0, 0);
-      this.gl.enableVertexAttribArray(shader.a_texture);
       this.gl.bindTexture(this.gl.TEXTURE_2D, shader.texture);
       this.gl.uniform1i(shader.u_texture, 0);
     }
+    this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
     return this;
   }
 
@@ -226,11 +230,53 @@ var Shader = class Shader {
     this.textureUrl = opt.textureUrl;
     this.uniforms = opt.uniforms;
     this._uniforms = [];
+    this.focus = false;
+    this.uv_size = [1.0, 1.0];
   }
 
-  init(box) {
+  updateUvBuffer() {
+    if (this.box.focus === this.index && !this.focus) {
+      this.focus = true;
+      return this.setUvBuffer(this.index);
+    } else if (this.box.focus !== this.index && this.focus) {
+      this.focus = false;
+      return this.setUvBuffer(this.index);
+    }
+  }
+
+  setUvBuffer(i) {
+    var nh, nw, r_x, r_y;
+    // console.log @image_ratio_y,@image_ratio_x
+    if (this.focus) {
+      nw = this.box.width / this.uv_size[0];
+      nh = this.box.height / this.uv_size[1];
+    } else {
+      nw = this.box.width / this.uv_size[0] / this.box.grid[0];
+      nh = this.box.height / this.uv_size[1] / this.box.grid[1];
+    }
+    r_x = .5 - ((nw / nh) / 2);
+    r_y = .5 - (nh / nw) / 2;
+    if (r_x > 0) {
+      r_y = 0;
+    } else {
+      // r_x *= @image_ratio_x
+      r_x = 0;
+    }
+    // r_y *= @image_ratio_y
+    return this.uv_buffer = this.box.createBuffer(this.box.pos[i].x, this.box.pos[i].y, [r_x, 1 - r_y, r_x, r_y, 1 - r_x, 1 - r_y, 1 - r_x, 0 + r_y]);
+  }
+
+  setVertBuffer(i) {
+    return this.vert_buffer = this.box.createBuffer(this.box.pos[i].x, this.box.pos[i].y, [-1, -1, -1, 1, 1, -1, 1, 1]);
+  }
+
+  init(box, index) {
     var image, key, ref, results, u, val;
-    this.gl = box.gl;
+    this.box = box;
+    this.index = index;
+    this.setUvBuffer(this.index);
+    this.setVertBuffer(this.index);
+    this.gl = this.box.gl;
     this.program = this.createProgram(default_vertex_shader, this.code);
     this.a_position = this.gl.getAttribLocation(this.program, "a_position");
     this.a_texture = this.gl.getAttribLocation(this.program, "a_texture");
@@ -243,13 +289,14 @@ var Shader = class Shader {
       this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
       image = new Image();
       image.src = this.textureUrl;
-      image.addEventListener('load', () => {
+      image.addEventListener('load', (e) => {
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, image);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST);
-        return this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+        this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
+        return this.setUvBuffer(this.index);
       });
     }
     ref = this.uniforms;
@@ -301,7 +348,7 @@ var Shader = class Shader {
 /* 1 */
 /***/ (function(module, exports) {
 
-module.exports=opts=>"attribute vec2 a_position;\nattribute vec2 a_texture;\nuniform vec2 u_move;\nuniform vec2 u_scale;\nvarying vec2 v_texture;\nvoid main() {\n\tgl_Position = vec4((a_position + u_move) * u_scale, 0.0, 1.0);\n\tv_texture = a_texture;\n}\n";
+module.exports=opts=>"attribute vec2 a_position;\nattribute vec2 a_texture;\nuniform vec2 u_move;\nuniform vec2 u_scale;\nvarying vec2 v_uv;\nvoid main() {\n\tgl_Position = vec4((a_position + u_move) * u_scale, 0.0, 1.0);\n\tv_uv = a_texture;\n}\n";
 
 /***/ })
 /******/ ]);

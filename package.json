@@ -1,6 +1,6 @@
 {
   "name": "shader-box",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "the easiest way to render a simple 1x1 frag shader.",
   "module": "shader-box.js",
   "scripts": {
