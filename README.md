@@ -11,9 +11,8 @@ Import it as a module or use the script tag with `window.ShaderBox`
 
 ### Uniforms
 ```glsl
-varying vec2 v_uv; //uv frag position [-1,1]
-
-uniform sampler2D u_texture; //texture uniform
+varying vec2 v_uv;
+uniform sampler2D u_texture;
 ```
 ***
 
@@ -122,7 +121,9 @@ tick(0);
 
 
 
----
+
+
+
 this library uses ES6 classes, and is compiled from coffeescript. you can find the source files in the src folder
 ---
 
