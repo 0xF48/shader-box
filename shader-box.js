@@ -320,14 +320,14 @@ var Shader = class Shader {
     this.gl.shaderSource(fs, frag);
     this.gl.compileShader(fs);
     if (!this.gl.getShaderParameter(fs, this.gl.COMPILE_STATUS)) {
-      throw new Error(this.gl.getShaderInfoLog(fs));
+      throw new Error('FRAGMENT_COMPILE_' + this.gl.getShaderInfoLog(fs));
     }
     // make vertex shader
     vs = this.gl.createShader(this.gl.VERTEX_SHADER);
     this.gl.shaderSource(vs, vert);
     this.gl.compileShader(vs);
     if (!this.gl.getShaderParameter(vs, this.gl.COMPILE_STATUS)) {
-      throw new Error(this.gl.getShaderInfoLog(vs));
+      throw new Error('VERTEX_COMPILE_' + this.gl.getShaderInfoLog(vs));
     }
     // make and use program
     prog = this.gl.createProgram();
@@ -335,7 +335,7 @@ var Shader = class Shader {
     this.gl.attachShader(prog, vs);
     this.gl.linkProgram(prog);
     if (!this.gl.getProgramParameter(prog, this.gl.LINK_STATUS)) {
-      throw new Error(this.gl.getProgramInfoLog(prog));
+      throw new Error('SHADER_LINK_' + this.gl.getProgramInfoLog(prog));
     }
     return prog;
   }

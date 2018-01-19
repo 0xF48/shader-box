@@ -123,9 +123,6 @@ export class Box
 		@gl.enableVertexAttribArray(shader.a_position)
 		
 
-
-
-
 		@gl.bindBuffer(@gl.ARRAY_BUFFER, shader.uv_buffer)
 		@gl.vertexAttribPointer(shader.a_texture, 2, @gl.FLOAT, false, 0, 0)
 		@gl.enableVertexAttribArray(shader.a_texture)
@@ -229,23 +226,23 @@ export class Shader
 				name: key
 				isArray: val.type.match(/v$/)?
 			@_uniforms.push u
-
 	
-		
+	
+
 	createProgram: (vert,frag)->
 		# make fragment shader
 		fs = @gl.createShader(@gl.FRAGMENT_SHADER)
 		@gl.shaderSource(fs,frag)
 		@gl.compileShader(fs)
 		if !@gl.getShaderParameter(fs, @gl.COMPILE_STATUS)
-			throw new Error(@gl.getShaderInfoLog(fs))
+			throw new Error('FRAGMENT_COMPILE_'+@gl.getShaderInfoLog(fs))
 
 		# make vertex shader
 		vs = @gl.createShader(@gl.VERTEX_SHADER)
 		@gl.shaderSource(vs,vert)
 		@gl.compileShader(vs)
 		if !@gl.getShaderParameter(vs, @gl.COMPILE_STATUS)
-			throw new Error(@gl.getShaderInfoLog(vs))
+			throw new Error('VERTEX_COMPILE_'+@gl.getShaderInfoLog(vs))
 
 		# make and use program
 		prog = @gl.createProgram()
@@ -254,6 +251,6 @@ export class Shader
 		@gl.linkProgram(prog)
 
 		if !@gl.getProgramParameter(prog, @gl.LINK_STATUS)
-			throw new Error(this.gl.getProgramInfoLog(prog))
+			throw new Error('SHADER_LINK_'+this.gl.getProgramInfoLog(prog))
 		
 		return prog
