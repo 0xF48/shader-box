@@ -5,7 +5,6 @@ export class Box
 		@grid = opt.grid || [1,1]
 		@shaders = []
 		@pos = []
-		@ratio = 1
 		@gl = @canvas.getContext "experimental-webgl",(opt.context or {antialias:true,depth:false})
 		if !@gl
 			alert 'failed to start webgl :('
@@ -153,7 +152,7 @@ export class Shader
 		@uniforms = opt.uniforms
 		@_uniforms = []
 		@focus = false
-		@uv_size = [1.0,1.0]
+		@uv = opt.uv || [1.0,1.0]
 	updateUvBuffer: ()->
 		if @box.focus == @index && !@focus
 			@focus = true
@@ -166,11 +165,11 @@ export class Shader
 	setUvBuffer: (i)->
 		# console.log @image_ratio_y,@image_ratio_x
 		if @focus
-			nw = @box.width / @uv_size[0]
-			nh = @box.height / @uv_size[1]
+			nw = @box.width / @uv[0]
+			nh = @box.height / @uv[1]
 		else
-			nw = @box.width / @uv_size[0] / @box.grid[0]
-			nh = @box.height / @uv_size[1] / @box.grid[1]
+			nw = @box.width / @uv[0] / @box.grid[0]
+			nh = @box.height / @uv[1] / @box.grid[1]
 	
 		r_x = ( (.5) - ((nw / nh) / 2))
 		r_y = ( (.5) - (nh / nw) / 2 )

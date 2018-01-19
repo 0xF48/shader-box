@@ -93,7 +93,6 @@ var Box = class Box {
     this.grid = opt.grid || [1, 1];
     this.shaders = [];
     this.pos = [];
-    this.ratio = 1;
     this.gl = this.canvas.getContext("experimental-webgl", opt.context || {
       antialias: true,
       depth: false
@@ -231,7 +230,7 @@ var Shader = class Shader {
     this.uniforms = opt.uniforms;
     this._uniforms = [];
     this.focus = false;
-    this.uv_size = [1.0, 1.0];
+    this.uv = opt.uv || [1.0, 1.0];
   }
 
   updateUvBuffer() {
@@ -248,11 +247,11 @@ var Shader = class Shader {
     var nh, nw, r_x, r_y;
     // console.log @image_ratio_y,@image_ratio_x
     if (this.focus) {
-      nw = this.box.width / this.uv_size[0];
-      nh = this.box.height / this.uv_size[1];
+      nw = this.box.width / this.uv[0];
+      nh = this.box.height / this.uv[1];
     } else {
-      nw = this.box.width / this.uv_size[0] / this.box.grid[0];
-      nh = this.box.height / this.uv_size[1] / this.box.grid[1];
+      nw = this.box.width / this.uv[0] / this.box.grid[0];
+      nh = this.box.height / this.uv[1] / this.box.grid[1];
     }
     r_x = .5 - ((nw / nh) / 2);
     r_y = .5 - (nh / nw) / 2;
