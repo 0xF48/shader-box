@@ -3,7 +3,7 @@
 `npm install shader-box`
 
 
-A very easy way to render a simple frag shader on a 4 vertex triangle strip, no dependencies. `shader-box` is good for developing many different shaders seperately from main project, or showing off a collection of shaders on one canvas.
+`shader-box` is simple way to render a simple frag shader on a 4 vertex triangle strip, no dependencies. Great for initial/concept development of different shaders, or showing off a collection of shaders on one canvas!
 
 Import it as a module or use the script tag with `window.ShaderBox`
 
@@ -20,25 +20,25 @@ uniform sampler2D u_texture; //texture uniform
 
 
 ### Box Options
-* **`canvas`** *domElement* : canvas element (required)
-* **`resize`** *Boolean* : (default: true)
-* **`clearColor`** *Array[4]* : 4 length array for the clearColor (default: [0,0,0,0])
-* **`context`** *Object* : canvas.getContext 2nd parameter object. includes settings such as antialias and depth. (default {})
-* **`grid`** *Array[2]* : columns and rows. change this when you want to show multiple shaders on one screen. (default : [1,1])
-* **`uv_size`** *Array[2]* : aspect ratio for x and y uv. (default: [1,1])
+* **`canvas`** *`domElement`* : canvas element (required)
+* **`resize`** *`Boolean`* : (default: true)
+* **`clearColor`** *`Array[4]`* : 4 length array for the clearColor (default: [0,0,0,0])
+* **`context`** *`Object`* : canvas.getContext 2nd parameter object. includes settings such as antialias and depth. (default {})
+* **`grid`** *`Array[2]`* : columns and rows. change this when you want to show multiple shaders on one screen. (default : [1,1])
+* **`uv_size`** *`Array[2]`* : aspect ratio for x and y uv. (default: [1,1])
 ***
 
 
 
 ### Shader Options
-* **`code`** *String* fragment shader string.
-* **`uniforms`** *Object* see example on how to add uniforms.
-```javascript
-my_uniform_name: {
-  type: '2fv', // uniform type. creates a function like `set = @gl["uniform"+type].bind(@gl)`
-  value: [0.4, 0.4]
-}
-```
+* **`code`** *`String`* fragment shader string.
+* **`uniforms`** *`Object`* uniform format is as follows:
+* ```javascript
+  my_uniform_name: {
+    type: '2fv', // uniform type. creates a function like `set = @gl["uniform"+type].bind(@gl)`
+    value: [0.4, 0.4]
+  }
+  ```
 * **`textureUrl`**: *String* set the url of a texture you want to load. if your texture is not 1:1, you need to set the uv_size so that it matches the ratio of the texture.
 ***
 
