@@ -3,6 +3,13 @@
 `npm install shader-box`
 
 
+<a href="https://npmjs.com/package/shader-box" alt="npm link"><img src="https://img.shields.io/npm/v/preact-slide.svg?style=flat-square" /></a>
+
+
+[demo](http://arxii.github.io/shader-box)
+
+
+
 An easy way to render a simple frag shader on a 4 vertex triangle strip, no dependencies. Great for initial/concept development of different shaders, or showing off a collection of shaders on one canvas!
 
 Import it as a module or use the script tag with `window.ShaderBox`

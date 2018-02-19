@@ -76,11 +76,7 @@ export class Box
 			throw new Error 'shader has not been added.'
 		i = i || 0
 		v_buffer = shader.vert_buffer
-		
-		
 		@gl.useProgram shader.program
-		
-
 		shader.updateUvBuffer()
 
 
@@ -133,12 +129,6 @@ export class Box
 		
 		
 		@gl.drawArrays(@gl.TRIANGLE_STRIP, 0,4)
-
-
-
-		
-		
-
 		return @
 
 
@@ -235,14 +225,14 @@ export class Shader
 		@gl.shaderSource(fs,frag)
 		@gl.compileShader(fs)
 		if !@gl.getShaderParameter(fs, @gl.COMPILE_STATUS)
-			throw new Error('FRAGMENT_COMPILE_'+@gl.getShaderInfoLog(fs))
+			throw new Error('\nFRAGMENT_COMPILE_ERROR:\n\n'+@gl.getShaderInfoLog(fs)+'\nSOURCE:\n\n'+@gl.getShaderSource(fs))
 
 		# make vertex shader
 		vs = @gl.createShader(@gl.VERTEX_SHADER)
 		@gl.shaderSource(vs,vert)
 		@gl.compileShader(vs)
 		if !@gl.getShaderParameter(vs, @gl.COMPILE_STATUS)
-			throw new Error('VERTEX_COMPILE_'+@gl.getShaderInfoLog(vs))
+			throw new Error('\nVERTEX_COMPILE_ERROR:\n\n'+@gl.getShaderInfoLog(vs)+'\nSOURCE:\n\n'+gl.getShaderSource(vs))
 
 		# make and use program
 		prog = @gl.createProgram()

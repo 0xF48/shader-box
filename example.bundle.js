@@ -1,14 +1,4 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["ShaderBox"] = factory();
-	else
-		root["ShaderBox"] = factory();
-})(typeof self !== 'undefined' ? self : this, function() {
-return /******/ (function(modules) { // webpackBootstrap
+/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -75,6 +65,97 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Box, Shader, box, draw, frag_shader, frag_shader2, mouse, shaderA, shaderB;
+
+({Box, Shader} = __webpack_require__(1));
+
+frag_shader = __webpack_require__(3)();
+
+frag_shader2 = __webpack_require__(4)();
+
+// frag_shader3 = require('./examples/image.glsl')()
+box = new Box({
+  canvas: window.canvas, //canvas element to get context from
+  resize: true, //auto resize on window.resize
+  clearColor: [0.0, 0.0, 0.0, 1.0],
+  grid: [
+    2,
+    1 //x and y size of a grid, if you want to display more than one shader like in this example. default is 1 x 1
+  ],
+  context: {
+    antialias: true,
+    depth: false
+  }
+});
+
+shaderA = new Shader({
+  code: frag_shader, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
+  uniforms: {
+    iTime: {
+      type: '1f',
+      val: 0.4
+    }
+  }
+});
+
+shaderB = new Shader({
+  code: frag_shader2, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for 
+  uniforms: {
+    iTime: {
+      type: '1f',
+      val: 0.4
+    }
+  }
+});
+
+// shaderC = new Shader
+// 	code: frag_shader3 #you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
+// 	textureUrl: './src/star.jpeg'
+// 	uniforms:
+// 		pos: #uniform name
+// 			type:'2fv' # setter = @gl["uniform"+type]
+// 			val: [0.4,0.4]
+// 		iTime:
+// 			type:'1f'
+// 			val: 0.4
+box.add(shaderA).add(shaderB);
+
+mouse = {
+  x: 0,
+  y: 0
+};
+
+window.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX;
+  return mouse.y = e.clientY;
+});
+
+// set box.focus to index of the grid, eg if grid is [3,1] focus can be -1 (display all shaders), 0 ,1, or 2
+window.addEventListener('click', (e) => {
+  box.focus += 1;
+  if (box.focus === 2) {
+    return box.focus = -1;
+  }
+});
+
+draw = function(t) {
+  requestAnimationFrame(draw);
+  shaderA.uniforms.iTime.val = t * .001;
+  shaderB.uniforms.iTime.val = t * .001;
+  // shaderC.uniforms.iTime.val = t+4242
+  // shaderC.uniforms.pos.val[0] = 1 - (mouse.x / window.innerWidth)
+  // shaderC.uniforms.pos.val[1] = mouse.y / window.innerHeight
+  return box.clear().draw(shaderA).draw(shaderB);
+};
+
+// .draw(shaderC)
+draw(0);
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -83,7 +164,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Shader", function() { return Shader; });
 var default_vertex_shader;
 
-default_vertex_shader = __webpack_require__(1)();
+default_vertex_shader = __webpack_require__(2)();
 
 var Box = class Box {
   constructor(opt) {
@@ -344,11 +425,23 @@ var Shader = class Shader {
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports=opts=>"attribute vec2 a_position;\nattribute vec2 a_texture;\nuniform vec2 u_move;\nuniform vec2 u_scale;\nvarying vec2 v_uv;\nvoid main() {\n\tgl_Position = vec4((a_position + u_move) * u_scale, 0.0, 1.0);\n\tv_uv = a_texture;\n}\n";
 
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports=opts=>"precision highp float;\nuniform vec2 pos;\nuniform float iTime;\nvarying vec2 v_uv;\nfloat random(in vec2 _st) {\n\treturn fract(sin(dot(_st.xy, vec2(12.9898, 78.233))) * 43758.54531237);\n}\nfloat noise(in vec2 _st) {\n\tvec2 i = floor(_st);\n\tvec2 f = fract(_st);\n\tfloat a = random(i);\n\tfloat b = random(i + vec2(1.0, 0.0));\n\tfloat c = random(i + vec2(0.0, 1.0));\n\tfloat d = random(i + vec2(1.0, 1.0));\n\tvec2 u = (f * f) * (3. - (2.0 * f));\n\treturn (mix(a, b, u.x) + (((c - a) * u.y) * (1. - u.x))) + (((d - b) * u.x) * u.y);\n}\nfloat light(in vec2 pos, in float size, in float radius, in float inner_fade, in float outer_fade) {\n\tfloat len = length(pos / size);\n\treturn pow(clamp(1.0 - pow(clamp(len - radius, 0.0, 1.0), 1.0 / inner_fade), 0.0, 1.0), 1.0 / outer_fade);\n}\nfloat flare(in float angle, in float alpha, in float time) {\n\tfloat t = time;\n\tfloat n = noise(vec2(((t + 0.5) + abs(angle)) + pow(alpha, 0.6), (t - abs(angle)) + pow(alpha + 0.1, 0.6)) * 7.0);\n\tfloat split = 15.0 + (sin((((t * 2.0) + (n * 4.0)) + (angle * 20.0)) + ((alpha * 1.0) * n)) * ((.3 + .5) + ((alpha * .6) * n)));\n\tfloat rotate = sin((angle * 20.0) + sin(((((angle * 15.0) + (alpha * 4.0)) + (t * 30.0)) + (n * 5.0)) + (alpha * 4.0))) * (.5 + (alpha * 1.5));\n\tfloat g = pow(((2.0 + (sin((split + ((n * 1.5) * alpha)) + rotate) * 1.4)) * n) * 4.0, n * (1.5 - (0.8 * alpha)));\n\tg *= (((alpha * alpha) * alpha) * .4);\n\tg += ((alpha * .7) + ((g * g) * g));\n\treturn g;\n}\n#define SIZE 2.3\n#define RADIUS 0.099\n#define INNER_FADE .8\n#define OUTER_FADE 0.02\n#define OUTER_FADE_2 0.01\n#define SPEED .1\n#define BORDER 0.21999\nvoid main() {\n\tvec2 uv = vec2(v_uv - 0.5) * 1.5;\n\tfloat f = .0;\n\tfloat f2 = .0;\n\tfloat t = iTime * SPEED;\n\tfloat alpha = light(uv, SIZE, RADIUS, INNER_FADE, OUTER_FADE);\n\tfloat angle = atan(uv.x, uv.y);\n\tfloat n = noise(vec2((uv.x * 20.) + iTime, (uv.y * 20.) + iTime));\n\tfloat l = length(uv);\n\tif (l < BORDER) {\n\t\tt *= .8;\n\t\talpha = 1. - (pow((BORDER - l) / BORDER, 0.22) * 0.7);\n\t\talpha = clamp(alpha - (light(uv, 0.2, 0.0, 1.3, .7) * .55), .0, 1.);\n\t\tf = flare(angle * 1.0, alpha, (-t * .5) + alpha);\n\t\tf2 = flare(angle * 1.0, alpha, (-t + (alpha * .5)) + 0.38134);\n\t}\n\telse if (alpha < 0.001) {\n\t\tf = alpha;\n\t}\n\telse {\n\t\tf = flare(angle, alpha, t) * 1.3;\n\t}\n\tgl_FragColor = vec4(vec3((f * (1.0 + (sin(angle - (t * 4.)) * .3))) + ((f2 * f2) * f2), (f * alpha) + ((f2 * f2) * 2.0), ((f * alpha) * 0.5) + (f2 * (1.0 + (sin(angle + (t * 4.)) * .3)))), 1.0);\n}\n";
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports=opts=>"precision highp float;\nvarying vec2 v_uv;\nuniform float iTime;\nconst vec3 inkColor = vec3(0.01, 0.01, 0.1);\nconst vec3 paperColor = vec3(1.0, 0.98, 0.94);\nconst float speed = 0.01;\nconst float shadeContrast = 0.55;\nconst float F3 = 0.3333333;\nconst float G3 = 0.1666667;\nvec3 random3(vec3 c) {\n\tfloat j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));\n\tvec3 r;\n\tr.z = fract(512.0 * j);\n\tj *= .125;\n\tr.x = fract(512.0 * j);\n\tj *= .125;\n\tr.y = fract(512.0 * j);\n\treturn r - 0.5;\n}\nfloat simplex3d(vec3 p) {\n\tvec3 s = floor(p + dot(p, vec3(F3)));\n\tvec3 x = (p - s) + dot(s, vec3(G3));\n\tvec3 e = step(vec3(0.0), x - x.yzx);\n\tvec3 i1 = e * (1.0 - e.zxy);\n\tvec3 i2 = 1.0 - (e.zxy * (1.0 - e));\n\tvec3 x1 = (x - i1) + G3;\n\tvec3 x2 = (x - i2) + (2.0 * G3);\n\tvec3 x3 = (x - 1.0) + (3.0 * G3);\n\tvec4 w, d;\n\tw.x = dot(x, x);\n\tw.y = dot(x1, x1);\n\tw.z = dot(x2, x2);\n\tw.w = dot(x3, x3);\n\tw = max(0.6 - w, 0.0);\n\td.x = dot(random3(s), x);\n\td.y = dot(random3(s + i1), x1);\n\td.z = dot(random3(s + i2), x2);\n\td.w = dot(random3(s + 1.0), x3);\n\tw *= w;\n\tw *= w;\n\td *= w;\n\treturn dot(d, vec4(52.0));\n}\nfloat fbm(vec3 p) {\n\tfloat f = 0.0;\n\tfloat frequency = 1.0;\n\tfloat amplitude = 0.5;\n\tfor (int i = 0; i < 5; i++) {\n\t\tf += (simplex3d(p * frequency) * amplitude);\n\t\tamplitude *= 0.5;\n\t\tfrequency *= (2.0 + (float(i) / 100.0));\n\t}\n\treturn min(f, 1.0);\n}\n#define SCALE 3.0\nvoid main() {\n\tvec2 uv = vec2(v_uv);\n\tuv.x = 1.0 - (abs(.5 - uv.x) * SCALE);\n\tuv.y *= SCALE;\n\tvec3 p = vec3(uv, iTime * speed);\n\tfloat blot = fbm((p * 3.0) + 8.0);\n\tfloat shade = fbm((p * 2.0) + 16.0);\n\tblot = blot + (sqrt(uv.x) - abs((SCALE / 2.0) - uv.y));\n\tblot = smoothstep(0.65, 0.71, blot) * max(1.0 - (shade * shadeContrast), 0.0);\n\tgl_FragColor = vec4(mix(paperColor, inkColor, blot), 1.0);\n}\n";
+
 /***/ })
 /******/ ]);
-});
+//# sourceMappingURL=example.bundle.js.map

@@ -16,10 +16,9 @@ cfg = {
 	},
 
 	devServer: {
-		port: 3000,
-		contentBase: __dirname+"/example",
+		port: 3033,
+		contentBase: __dirname,
 		compress: true
-
 	}
 }
 module.exports = cfg

@@ -1,7 +1,8 @@
 
 {Box,Shader} = require './shader-box.coffee'
-frag_shader = require('./example_frag.glsl')()
-frag_shader2 = require('./example_frag2.glsl')()
+frag_shader = require('./examples/flame-eye.glsl')()
+frag_shader2 = require('./examples/rorschach-test.glsl')()
+# frag_shader3 = require('./examples/image.glsl')()
 
 box = new Box
 	canvas: window.canvas #canvas element to get context from
@@ -22,16 +23,23 @@ shaderA = new Shader
 
 
 shaderB = new Shader
-	code: frag_shader2 #you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
-	textureUrl: './star.jpeg'
+	code: frag_shader2 #you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for 
 	uniforms:
-		pos: #uniform name
-			type:'2fv' # setter = @gl["uniform"+type]
-			val: [0.4,0.4]
 		iTime:
 			type:'1f'
 			val: 0.4
 
+
+# shaderC = new Shader
+# 	code: frag_shader3 #you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
+# 	textureUrl: './src/star.jpeg'
+# 	uniforms:
+# 		pos: #uniform name
+# 			type:'2fv' # setter = @gl["uniform"+type]
+# 			val: [0.4,0.4]
+# 		iTime:
+# 			type:'1f'
+# 			val: 0.4
 
 
 box.add(shaderA).add(shaderB)
@@ -51,14 +59,16 @@ window.addEventListener 'click', (e)=>
 
 draw = (t)->
 	requestAnimationFrame(draw)
-	shaderA.uniforms.iTime.val = t
-	shaderB.uniforms.iTime.val = t+4242
-	shaderB.uniforms.pos.val[0] = 1 - (mouse.x / window.innerWidth)
-	shaderB.uniforms.pos.val[1] = mouse.y / window.innerHeight
+	shaderA.uniforms.iTime.val = t*.001
+	shaderB.uniforms.iTime.val = t*.001
+	# shaderC.uniforms.iTime.val = t+4242
+	# shaderC.uniforms.pos.val[0] = 1 - (mouse.x / window.innerWidth)
+	# shaderC.uniforms.pos.val[1] = mouse.y / window.innerHeight
 	box
 		.clear()
 		.draw(shaderA)
 		.draw(shaderB)
+		# .draw(shaderC)
 
 
 
