@@ -8,6 +8,10 @@
     "dev": "webpack-dev-server --config wp.dev.js",
     "prepublish": "webpack --config wp.dist.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/arxii/shader-box.git"
+  },
   "author": "arxii",
   "license": "ISC",
   "devDependencies": {
