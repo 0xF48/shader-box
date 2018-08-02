@@ -91,35 +91,35 @@ box = new Box({
 });
 
 shaderA = new Shader({
-  code: frag_shader, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
+  source: frag_shader, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
   uniforms: {
     iTime: {
       type: '1f',
-      val: 0.4
+      value: 0.4
     }
   }
 });
 
 shaderB = new Shader({
-  code: frag_shader2, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for 
+  source: frag_shader2, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for 
   uniforms: {
     iTime: {
       type: '1f',
-      val: 0.4
+      value: 0.4
     }
   }
 });
 
 // shaderC = new Shader
-// 	code: frag_shader3 #you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
+// 	source: frag_shader3 #you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
 // 	textureUrl: './src/star.jpeg'
 // 	uniforms:
 // 		pos: #uniform name
 // 			type:'2fv' # setter = @gl["uniform"+type]
-// 			val: [0.4,0.4]
+// 			value: [0.4,0.4]
 // 		iTime:
 // 			type:'1f'
-// 			val: 0.4
+// 			value: 0.4
 box.add(shaderA).add(shaderB);
 
 mouse = {
@@ -142,11 +142,11 @@ window.addEventListener('click', (e) => {
 
 draw = function(t) {
   requestAnimationFrame(draw);
-  shaderA.uniforms.iTime.val = t * .001;
-  shaderB.uniforms.iTime.val = t * .001;
-  // shaderC.uniforms.iTime.val = t+4242
-  // shaderC.uniforms.pos.val[0] = 1 - (mouse.x / window.innerWidth)
-  // shaderC.uniforms.pos.val[1] = mouse.y / window.innerHeight
+  shaderA.uniforms.iTime.value = t * .001;
+  shaderB.uniforms.iTime.value = t * .001;
+  // shaderC.uniforms.iTime.value = t+4242
+  // shaderC.uniforms.pos.value[0] = 1 - (mouse.x / window.innerWidth)
+  // shaderC.uniforms.pos.value[1] = mouse.y / window.innerHeight
   return box.clear().draw(shaderA).draw(shaderB);
 };
 
@@ -278,13 +278,13 @@ var Box = class Box {
     for (j = 0, len = ref.length; j < len; j++) {
       u = ref[j];
       if (u.isArray) {
-        u.set(u.loc, shader.uniforms[u.name].val);
+        u.set(u.loc, shader.uniforms[u.name].value);
       } else {
         _u = shader.uniforms[u.name];
-        if (_u.val.length) {
-          u.set(u.loc, _u.val[0], _u.val[1], _u.val[2], _u.val[3]);
+        if (_u.value.length) {
+          u.set(u.loc, _u.value[0], _u.value[1], _u.value[2], _u.value[3]);
         } else {
-          u.set(u.loc, _u.val);
+          u.set(u.loc, _u.value);
         }
       }
     }
@@ -306,7 +306,7 @@ var Box = class Box {
 
 var Shader = class Shader {
   constructor(opt) {
-    this.code = opt.code;
+    this.code = opt.source;
     this.textureUrl = opt.textureUrl;
     this.uniforms = opt.uniforms;
     this._uniforms = [];

@@ -77,7 +77,7 @@ var box = new Box({
 
 //create a shader
 var shaderA = new Shader({
-  code: frag_shader, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
+  source: frag_shader, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
   uniforms: {
     iTime: {
       type: '1f',
@@ -88,7 +88,7 @@ var shaderA = new Shader({
 
 //create another shader
 var shaderB = new Shader({
-  code: frag_shader2, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
+  source: frag_shader2, //you can use webpack and require your shaders easy with a glsl or raw loader, look in the webpack.config.js for more
   textureUrl: './star.jpeg',
   uv: [1,1], //set the uv to match the width/height ratio of the star, in this case the image is square.
   uniforms: {

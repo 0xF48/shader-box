@@ -105,13 +105,13 @@ export class Box
 		@gl.uniform2f(shader.u_scale, v_buffer.u_scale.stage[0], v_buffer.u_scale.stage[1])
 		for u in shader._uniforms
 			if u.isArray
-				u.set(u.loc,shader.uniforms[u.name].val)
+				u.set(u.loc,shader.uniforms[u.name].value)
 			else
 				_u = shader.uniforms[u.name]
-				if _u.val.length
-					u.set(u.loc,_u.val[0],_u.val[1],_u.val[2],_u.val[3])
+				if _u.value.length
+					u.set(u.loc,_u.value[0],_u.value[1],_u.value[2],_u.value[3])
 				else
-					u.set(u.loc,_u.val)
+					u.set(u.loc,_u.value)
 
 	
 		@gl.bindBuffer(@gl.ARRAY_BUFFER, v_buffer)
@@ -134,7 +134,7 @@ export class Box
 
 export class Shader
 	constructor: (opt)->
-		@code = opt.code
+		@code = opt.source
 		@textureUrl = opt.textureUrl
 		@uniforms = opt.uniforms
 		@_uniforms = []
