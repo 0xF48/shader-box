@@ -6,56 +6,13 @@
 <a href="https://npmjs.com/package/shader-box" alt="npm link"><img src="https://img.shields.io/npm/v/preact-slide.svg?style=flat-square" /></a>
 
 
-[demo](http://arxii.github.io/shader-box)
+[live example](http://arxii.github.io/shader-box)
 
 
 
 An easy way to render a simple frag shader on a 4 vertex triangle strip, no dependencies. Great for initial/concept development of different shaders, or showing off a collection of shaders on one canvas!
 
 Import it as a module or use the script tag with `window.ShaderBox`
-
-
-
-### Uniforms
-```glsl
-varying vec2 v_uv; //gl uv position from 0 to 1, starting top left and ending at bottom right.
-uniform sampler2D u_texture;
-```
-***
-
-
-
-### Box Options
-* **`canvas`** *`domElement (required)`*  canvas element 
-* **`resize`** *`true`*  update the viewport on window resize
-* **`clearColor`** *`[0,0,0,0]`* : 4 length array for the clearColor
-* **`context`** *`{}`* : canvas.getContext 2nd parameter object. includes settings such as antialias and depth. 
-* **`grid`** *`[1,1]`* : columns and rows. change this when you want to show multiple shaders on one screen.
-***
-
-
-
-### Shader Options
-* **`code`** *`String (required)`* fragment shader string.
-* **`uv`** *`[1.0,1.0]`* : aspect/size ratio for width and height of the UV.
-* **`uniforms`** *`{}`* uniform format is as follows:
-* ```javascript
-  my_uniform_name: {
-    type: '2fv', // uniform type. creates a function from this string `set = @gl["uniform"+type].bind(@gl)`
-    value: [0.4, 0.4]
-  }
-  ```
-* **`textureUrl`**: *String* set the url of a texture you want to load. if your texture is not 1:1, you need to set the uv so that it matches the ratio of the texture.
-***
-
-
-
-### Box Methods
-* **`.add`** *`Shader`* add and initalize a shader assigning it to a position on the grid.
-* **`.clear`** clear the canvas.
-* **`.draw`** *`Shader`* draw a shader.
-* **`.focus`** *`Integer`* when rendering more than one shader, you can set the focus to a particular index on the grid. index positions are incremented whenever a shader is added.
-***
 
 
 
@@ -127,14 +84,51 @@ tick(0);
 ```
 
 
+### Uniforms
+```glsl
+varying vec2 v_uv; //gl uv position from 0 to 1, starting top left and ending at bottom right.
+uniform sampler2D u_texture;
+```
+***
 
 
 
+### Box Options
+* **`canvas`** *`domElement (required)`*  canvas element 
+* **`resize`** *`true`*  update the viewport on window resize
+* **`clearColor`** *`[0,0,0,0]`* : 4 length array for the clearColor
+* **`context`** *`{}`* : canvas.getContext 2nd parameter object. includes settings such as antialias and depth. 
+* **`grid`** *`[1,1]`* : columns and rows. change this when you want to show multiple shaders on one screen.
+***
 
-this library uses ES6 classes, and is compiled from coffeescript. you can find the source files in the src folder
+
+
+### Shader Options
+* **`source`** *`String (required)`* fragment shader string.
+* **`uv`** *`[1.0,1.0]`* : aspect/size ratio for width and height of the UV.
+* **`uniforms`** *`{}`* uniform format is as follows:
+* ```javascript
+  my_uniform_name: {
+    type: '2fv', // uniform type. creates a function from this string `set = @gl["uniform"+type].bind(@gl)`
+    value: [0.4, 0.4]
+  }
+  ```
+* **`textureUrl`**: *String* set the url of a texture you want to load. if your texture is not 1:1, you need to set the uv so that it matches the ratio of the texture.
+***
+
+
+
+### Box Methods
+* **`.add`** *`Shader`* add and initalize a shader assigning it to a position on the grid.
+* **`.clear`** clear the canvas.
+* **`.draw`** *`Shader`* draw a shader.
+* **`.focus`** *`Integer`* when rendering more than one shader, you can set the focus to a particular index on the grid. index positions are incremented whenever a shader is added.
+***
+
+
+
+This library uses ES6 classes and is compiled from coffeescript. you can find the source files in the src folder
 ---
-
-
 to run webpack-dev-server with example:
 ```
 npm install
@@ -142,8 +136,6 @@ npm run-script dev
 ```
 
 
-repo todos:
+### todos
+* multiple buffers for image transitions, etc...
 * clean up code
-* multiple shader passes per texture
-
-
