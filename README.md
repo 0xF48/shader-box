@@ -68,8 +68,8 @@ var tick = function(t){
   requestAnimationFrame(tick)
 
   //update the uniforms.
-  shaderA.uniforms.iTime.val = t 
-  shaderB.uniforms.pos.val[0] = 0.5
+  shaderA.uniforms.iTime.value = t 
+  shaderB.uniforms.pos.value[0] = 0.5
 
   //clear and draw
   box
