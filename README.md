@@ -126,14 +126,11 @@ uniform sampler2D u_texture;
 ***
 
 
+----------
 
-This library uses ES6 classes and is compiled from coffeescript. you can find the source files in the src folder
----
-to run webpack-dev-server with example:
-```
-npm install
-npm run-script dev
-```
+
+This library uses ES6 classes and is compiled from coffeescript. you can find the source files in the src folder/
+To run webpack-dev-server with example use `npm i && npm run dev`
 
 
 ### todos
