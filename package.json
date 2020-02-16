@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config wp.dist.js && webpack --config wp.dev.js",
     "dev": "webpack-dev-server --config wp.dev.js",
-    "prepublish": "webpack --config wp.dist.js"
+    "prepublish": "webpack --config wp.dist.js && webpack --config wp.dist-var.js"
   },
   "repository": {
     "type": "git",
