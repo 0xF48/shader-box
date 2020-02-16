@@ -1,7 +1,8 @@
 webpack = require("webpack")
 cfg = {
 	module: {
-		loaders: [
+		rules: [
+
 			{ test: /\.coffee$/, use: "coffee-loader"},
 			{ test: /\.glsl$/, use: "glsl-template-loader" }
 		]

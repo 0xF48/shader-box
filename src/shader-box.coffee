@@ -1,5 +1,5 @@
 default_vertex_shader = require('./vertex_shader.glsl')()
-export class Box
+class Box
 	constructor: (opt)->
 		@canvas = opt.canvas
 		@grid = opt.grid || [1,1]
@@ -108,7 +108,10 @@ export class Box
 				u.set(u.loc,shader.uniforms[u.name].value)
 			else
 				_u = shader.uniforms[u.name]
-				if _u.value.length
+				# if _u.value == undefined
+				# 	console.error(u.name,_u)
+				# 	throw new TypeError 'incorrect uniform value - undefined'
+				if Array.isArray(_u.value)
 					u.set(u.loc,_u.value[0],_u.value[1],_u.value[2],_u.value[3])
 				else
 					u.set(u.loc,_u.value)
@@ -132,10 +135,13 @@ export class Box
 		return @
 
 
-export class Shader
+class Shader
 	constructor: (opt)->
 		@code = opt.source
 		@textureUrl = opt.textureUrl
+		
+
+
 		@uniforms = opt.uniforms
 		@_uniforms = []
 		@focus = false
@@ -161,11 +167,11 @@ export class Shader
 		r_x = ( (.5) - ((nw / nh) / 2))
 		r_y = ( (.5) - (nh / nw) / 2 )
 
-		if r_x > 0
-			r_y = 0
-			# r_x *= @image_ratio_x
-		else
-			r_x = 0
+		# if r_x > 0
+		r_y = 0
+		# 	# r_x *= @image_ratio_x
+		# else
+		# 	r_x = 0
 			# r_y *= @image_ratio_y
 		@uv_buffer = @box.createBuffer(@box.pos[i].x,@box.pos[i].y,[ r_x,1-r_y,   r_x,r_y, 1-r_x,1-r_y   ,1-r_x,0+r_y,    ])
 
@@ -198,14 +204,15 @@ export class Shader
 			@gl.bindTexture(@gl.TEXTURE_2D, @texture)
 			@gl.texImage2D(@gl.TEXTURE_2D, 0, @gl.RGBA, 1, 1, 0, @gl.RGBA, @gl.UNSIGNED_BYTE,new Uint8Array([0, 0, 255, 255]))
 			image = new Image()
+			image.crossOrigin = ""
 			image.src = @textureUrl
 			image.addEventListener 'load', (e)=>
 				@gl.bindTexture(@gl.TEXTURE_2D, @texture)
 				@gl.texImage2D(@gl.TEXTURE_2D, 0, @gl.RGBA,@gl.RGBA,@gl.UNSIGNED_BYTE, image)
 				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_WRAP_S, @gl.CLAMP_TO_EDGE)
 				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_WRAP_T, @gl.CLAMP_TO_EDGE)
-				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_MIN_FILTER, @gl.NEAREST)
-				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_MAG_FILTER, @gl.NEAREST)
+				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_MIN_FILTER, @gl.LINEAR)
+				@gl.texParameteri(@gl.TEXTURE_2D, @gl.TEXTURE_MAG_FILTER, @gl.LINEAR)
 				@setUvBuffer(@index)
 
 
@@ -244,3 +251,5 @@ export class Shader
 			throw new Error('SHADER_LINK_'+this.gl.getProgramInfoLog(prog))
 		
 		return prog
+
+module.exports = {Box,Shader}

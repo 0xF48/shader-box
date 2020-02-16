@@ -2,13 +2,13 @@ webpack = require("webpack")
 cfg = {
 	devtool: 'source-map',
 	module: {
-		loaders: [
+		rules: [
+
 			{ test: /\.coffee$/, use: "coffee-loader"},
 			{ test: /\.glsl$/, use: "glsl-template-loader" }
 		]
 	},
 	entry: {"example.bundle": __dirname+"/src/example.coffee" },
-	resolve: { "modules": ["node_modules"] },
 	output: {
 		path: __dirname+'/',
 		publicPath: '/',
@@ -17,8 +17,8 @@ cfg = {
 
 	devServer: {
 		port: 3033,
-		contentBase: __dirname,
-		compress: true
+		contentBase: __dirname
 	}
 }
+
 module.exports = cfg
